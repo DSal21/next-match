@@ -54,8 +54,10 @@ model Member {
   country     String
   image       String?
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  photos Photo[]
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos  Photo[]
+  likes   Like[]  @relation("sourceUser")
+  likedBy Like[]  @relation("targetUser")
 }
 
 model Photo {
@@ -65,4 +67,13 @@ model Photo {
   memberId String
 
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  sourceUserId String
+  targetUserId String
+  sourceMember Member @relation("sourceUser", fields: [sourceUserId], references: [userId], onDelete: Cascade)
+  targetMember Member @relation("targetUser", fields: [targetUserId], references: [userId], onDelete: Cascade)
+
+  @@id([sourceUserId, targetUserId])
 }
